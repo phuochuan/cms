@@ -1,120 +1,61 @@
 version: "3.9"
 services:
-  server-staging:
-    image: "da-nang-internship-docker-local.dockerregistry.mgm-tp.com/com.mgmtp.da-nang-internship/com.mgmtp.cfu.server:staging"
-    container_name: "server-staging"
-    env_file:
-      - .env.staging
-    profiles: [ 'staging' ]
-    ports:
-      - "8080"
-    volumes:
-      - ./uploads:/app/uploads
+  # PostgreSQL database
+  postgres:
+    image: postgres:15
+    container_name: postgres-db
+    restart: always
     environment:
-      - spring.web.resources.static-locations=file:/app/uploads/staging
-      - course4u.upload.thumbnail-directory=./uploads/staging/api/thumbnail
-    networks:
-      - "cfu"
-    labels:
-      - "traefik.http.routers.cfu-server-staging-cfu.rule=(PathPrefix(`/staging/api`) || PathPrefix(`/staging/swagger-ui`) || PathPrefix(`/staging/api-docs/`))"
-      - "traefik.http.middlewares.cfu-server-staging-middleware.replacepathregex.regex=^/staging/api/(.*)"
-      - "traefik.http.middlewares.cfu-server-staging-middleware.replacepathregex.replacement=/api/$$1"
-      - "traefik.http.routers.cfu-server-staging-cfu.middlewares=cfu-server-staging-middleware"
-
-  client-staging:
-    image: "da-nang-internship-docker-local.dockerregistry.mgm-tp.com/com.mgmtp.da-nang-internship/com.mgmtp.cfu.client:staging"
-    container_name: "client-staging"
-    profiles: [ 'staging' ]
+      POSTGRES_DB: course4u
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "80"
-    networks:
-      - "cfu"
-    depends_on:
-      - "server-staging"
-    labels:
-      - "traefik.http.routers.cfu-client-staging-cfu.rule=PathPrefix(`/staging`)"
-      - "traefik.http.middlewares.cfu-client-staging-middleware.replacepathregex.regex=^/staging(.*)"
-      - "traefik.http.middlewares.cfu-client-staging-middleware.replacepathregex.replacement=$$1"
-      - "traefik.http.routers.cfu-client-staging-cfu.middlewares=cfu-client-staging-middleware"
-
-  # Dev environment
-  server-dev:
-    image: "da-nang-internship-docker-local.dockerregistry.mgm-tp.com/com.mgmtp.da-nang-internship/com.mgmtp.cfu.server:develop"
-    container_name: "server-dev"
-    env_file:
-      - .env.develop
-    profiles: [ 'develop' ]
-    ports:
-      - "8080"
+      - "5432:5432"
     volumes:
-      - ./uploads:/app/uploads
-    environment:
-      - spring.web.resources.static-locations=file:/app/uploads/dev
-      - course4u.upload.thumbnail-directory=./uploads/dev/api/thumbnail
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - "cfu"
-    labels:
-      - "traefik.http.routers.cfu-server-dev.rule=(PathPrefix(`/dev/api`) || PathPrefix(`/dev/h2-console`) || PathPrefix(`/dev/swagger-ui`) || PathPrefix(`/dev/api-docs`))"
-      - "traefik.http.middlewares.cfu-server-dev-h2console-middleware.replacepathregex.regex=^/dev/h2-console(.*)"
-      - "traefik.http.middlewares.cfu-server-dev-h2console-middleware.replacepathregex.replacement=/h2-console$$1"
-      - "traefik.http.middlewares.cfu-server-dev-api-middleware.replacepathregex.regex=^/dev/api/(.*)"
-      - "traefik.http.middlewares.cfu-server-dev-api-middleware.replacepathregex.replacement=/api/$$1"
-      - "traefik.http.routers.cfu-server-dev.middlewares=cfu-server-dev-h2console-middleware,cfu-server-dev-api-middleware"
+      - cfu
 
-  client-dev:
-    image: "da-nang-internship-docker-local.dockerregistry.mgm-tp.com/com.mgmtp.da-nang-internship/com.mgmtp.cfu.client:develop"
-    container_name: "client-dev"
-    profiles: [ 'develop' ]
-    ports:
-      - "80"
-    networks:
-      - "cfu"
-    depends_on:
-      - "server-dev"
-    labels:
-      - "traefik.http.routers.cfu-client-dev-cfu.rule=PathPrefix(`/dev`) && !PathPrefix(`/dev/api`) && !PathPrefix(`/dev/h2-console`)"
-      - "traefik.http.middlewares.cfu-client-dev-middleware.replacepathregex.regex=^/dev(.*)"
-      - "traefik.http.middlewares.cfu-client-dev-middleware.replacepathregex.replacement=$$1"
-      - "traefik.http.routers.cfu-client-dev-cfu.middlewares=cfu-client-dev-middleware"
-
-  # Production environment
+  # Production backend service (Spring Boot)
   server-prod:
-    image: "da-nang-internship-docker-local.dockerregistry.mgm-tp.com/com.mgmtp.da-nang-internship/com.mgmtp.cfu.server:master"
+    build:
+      context: ./server  # Path to backend project with Dockerfile
+      dockerfile: Dockerfile
     container_name: "server-prod"
-    env_file:
-      - .env.master
-    profiles: [ 'production' ]
+    restart: always
     ports:
-      - "8080"
+      - "8080:8080"
     volumes:
       - ./uploads:/app/uploads
     environment:
       - spring.web.resources.static-locations=file:/app/uploads
       - course4u.upload.thumbnail-directory=./uploads/api/thumbnail
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/course4u
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      - postgres
     networks:
-      - "cfu"
-    labels:
-      - "traefik.http.routers.cfu-server-prod.rule=PathPrefix(`/api`)"
-      - "traefik.http.middlewares.cfu-server-prod-api-middleware.replacepathregex.regex=^/api/(.*)"
-      - "traefik.http.middlewares.cfu-server-prod-api-middleware.replacepathregex.replacement=/api/$$1"
-      - "traefik.http.routers.cfu-server-prod-cfu.middlewares=cfu-server-prod-api-middleware"
+      - cfu
 
+  # Production frontend service (Vue.js + Nginx)
   client-prod:
-    image: "da-nang-internship-docker-local.dockerregistry.mgm-tp.com/com.mgmtp.da-nang-internship/com.mgmtp.cfu.client:master"
+    build:
+      context: ./client  # Path to frontend project with Dockerfile
+      dockerfile: Dockerfile
     container_name: "client-prod"
-    profiles: [ 'production' ]
+    restart: always
     ports:
-      - "80"
+      - "3000:80"
     networks:
-      - "cfu"
+      - cfu
     depends_on:
       - "server-prod"
-    labels:
-      - "traefik.http.routers.cfu-client-prod-cfu.rule=PathPrefix(`/`)"
-      - "traefik.http.middlewares.cfu-client-prod-middleware.replacepathregex.regex=^(.*)"
-      - "traefik.http.middlewares.cfu-client-prod-middleware.replacepathregex.replacement=$$1"
-      - "traefik.http.routers.cfu-client-prod-cfu.middlewares=cfu-client-prod-middleware"
+
 networks:
   cfu:
     external: true
     name: cfu
+
+volumes:
+  postgres_data:

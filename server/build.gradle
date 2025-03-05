@@ -44,7 +44,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.14.3'
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     liquibaseRuntime 'org.postgresql:postgresql'
-    implementation 'org.liquibase:liquibase-core'
+//    implementation 'org.liquibase:liquibase-core'
     liquibaseRuntime 'info.picocli:picocli:4.7.5'
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
