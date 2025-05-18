@@ -10,6 +10,8 @@ export enum Status {
     VERIFIED = "VERIFIED",
     CLOSED = "CLOSED",
     DISCARDED = "DISCARDED",
+    VERIFYING_ADMIN = "VERIFYING_ADMIN",
+    VERIFYING_ACCOUNTANT = "VERIFYING_ACCOUNTANT",
 }
 export const statusList = [
     {

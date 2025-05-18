@@ -83,9 +83,9 @@ public class AccountManagementColtroller {
             .email("carol@example.com")
             .avatarUrl("https://example.com/avatar3.png")
             .dateOfBirth(LocalDate.of(1995, 7, 20))
-            .role(Role.USER)
+            .role(Role.ACCOUNTANT)
             .gender(Gender.FEMALE)
-            .username("carol_user")
+            .username("accountant")
             .password(passwordEncoder.encode("password3"))
             .build();
 

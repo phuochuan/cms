@@ -49,7 +49,7 @@ const registrationStatusList: statusProps[] = [
 export const registrationStatusListForAccountant: statusProps[] = [
     {
         value: "0",
-        content: "Verifying",
+        content: "Verifying accountant",
     },
     {
         value: "1",
@@ -59,6 +59,7 @@ export const registrationStatusListForAccountant: statusProps[] = [
         value: "2",
         content: "Verified",
     },
+
 ];
 
 export default registrationStatusList;

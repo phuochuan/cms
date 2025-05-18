@@ -1,7 +1,7 @@
 const convertStatus = (status: string): string => {
     return status == "DOCUMENT_DECLINED"
         ? "Declined (Document)"
-        : status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
+        : status === "VERIFYING_ADMIN" ? "Verifying" : status === "VERIFYING_ACCOUNTANT" ? "Verifying" : status.charAt(0).toUpperCase() + status.slice(1).toLowerCase();
 };
 
 //
@@ -31,7 +31,7 @@ const convertPeriod = (
         ? convertJSDatesToCorrectFormat(endDate)
         : "";
 
-    return `Period: ${ handledStartDate } - ${ handledEndDate || "Not finished yet"}`;
+    return `Period: ${handledStartDate} - ${handledEndDate || "Not finished yet"}`;
 };
 
 export {

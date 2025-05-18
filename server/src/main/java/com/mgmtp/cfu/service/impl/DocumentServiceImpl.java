@@ -99,7 +99,7 @@ public class DocumentServiceImpl implements DocumentService {
         storageDocuments(payments, DocumentType.PAYMENT, registration, user);
         if(status.equals(RegistrationStatus.DONE))
             notifyAccountant(user, registration);
-        registration.setStatus(RegistrationStatus.VERIFYING);
+        registration.setStatus(RegistrationStatus.VERIFYING_ADMIN);
         registration.setLastUpdated(LocalDateTime.now());
         registrationRepository.save(registration);
     }

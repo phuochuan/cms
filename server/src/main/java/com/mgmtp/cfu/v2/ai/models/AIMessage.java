@@ -22,8 +22,5 @@ public class AIMessage {
     String role;
 
     @ManyToOne
-    @JsonIgnore
     AIThread thread;
-
-
 }

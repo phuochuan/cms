@@ -7,7 +7,8 @@ import java.util.List;
 public class RegistrationStatusUtil {
     public static final List<RegistrationStatus> ACCEPTED_STATUSES = List.of(
             RegistrationStatus.DONE,
-            RegistrationStatus.VERIFYING,
+            RegistrationStatus.VERIFYING_ADMIN,
+            RegistrationStatus.VERIFYING_ACCOUNTANT,
             RegistrationStatus.VERIFIED,
             RegistrationStatus.DOCUMENT_DECLINED,
             RegistrationStatus.CLOSED
@@ -19,7 +20,8 @@ public class RegistrationStatusUtil {
 
     public static final List<RegistrationStatus> CLOSABLE_STATUSES = List.of(
             RegistrationStatus.DONE,
-            RegistrationStatus.VERIFYING,
+            RegistrationStatus.VERIFYING_ADMIN,
+            RegistrationStatus.VERIFYING_ACCOUNTANT,
             RegistrationStatus.DOCUMENT_DECLINED,
             RegistrationStatus.VERIFIED
     );

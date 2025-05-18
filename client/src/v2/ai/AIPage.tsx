@@ -26,10 +26,7 @@ function AIPage() {
     const [messageId, setMessageId] = useState(null);
     const [courses, setCourses] = useState<any[] | undefined>();
     const [showCourses, setShowCourses] = useState(false);
-
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken();
+    
 
     // Fetch threads on mount
     useEffect(() => {
@@ -77,16 +74,50 @@ function AIPage() {
         label: thread.content,
     }));
 
+    function createNewThread() {
+        const newId = Math.floor(Math.random() * (100000 - threads.length + 1)) + threads.length;
+
+        if (threads.some(value => value.content === 'new conversation')) {
+            const selectedThread = threads.filter(value => value.content === 'new conversation')[0];
+
+            setSelectedThreadKey(selectedThread.id + '');
+
+            return;
+        }
+
+        setSelectedThreadKey(newId + '');
+
+        setThreads([{
+            id: newId,
+            content: 'new conversation'
+        }, ...threads])
+    }
+
+    async function setSelectedNewhread(id: React.SetStateAction<string | null | number>) {
+        const response = await instance.get("/v2/ai/courses/recommendation/threads");
+        const data = response.data || [];
+        setThreads(data);
+
+        setSelectedThreadKey(id)
+    }
+
     return (
         <AIPageLayout>
             <Layout style={{ maxHeight: "90vh" }}>
                 <Sider width={250} style={siderStyle}>
-                    <div style={{ padding: '16px', background: 'white', borderBottom: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{
+                        padding: '16px',
+                        background: 'white',
+                        borderBottom: '1px solid #f0f0f0',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                    }}>
                         <h2 style={{ margin: 0 }}>History</h2>
                         <Button
                             type="primary"
-                            icon={<PlusOutlined />}
-                            onClick={() => console.log('Add new item')}
+                            icon={<PlusOutlined/>}
+                            onClick={() => createNewThread()}
                         >
                             Add
                         </Button>
@@ -94,7 +125,7 @@ function AIPage() {
                     <Menu
                         mode="inline"
                         selectedKeys={selectedThreadKey ? [selectedThreadKey] : []}
-                        style={{ height: '100%', borderRight: 0,     overflow: 'auto', }}
+                        style={{ height: '100%', borderRight: 0, overflow: 'auto', }}
                         items={threadMenuItems}
                         onClick={({ key }) => {
                             setSelectedThreadKey(key);
@@ -119,7 +150,8 @@ function AIPage() {
                     >
                         {/* Left: Chat UI */}
                         <div style={{ flex: 1, minWidth: 0 }}>
-                            <ChatUI idThread={selectedThreadKey} setMessageId={setMessageId}/>
+                            <ChatUI idThread={selectedThreadKey} setMessageId={setMessageId}
+                                    setSelectedNewhread={setSelectedNewhread}/>
                         </div>
 
                         {/* Right: Course Panel */}
@@ -141,14 +173,7 @@ function AIPage() {
                                 <CourseList courses={courses || []}/>
                             </div>
                         ) : (
-                            <Button
-                                onClick={() => setShowCourses(true)}
-                                style={{ position: 'absolute', right: 24, top: 24, zIndex: 10 }}
-                                size="small"
-                                type="dashed"
-                            >
-                                Show Courses
-                            </Button>
+                            null
                         )}
                     </Content>
                 </Layout>

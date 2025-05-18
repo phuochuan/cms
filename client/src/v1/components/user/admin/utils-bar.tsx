@@ -36,6 +36,7 @@ const UtilsBar = ({statusList, options, role}: PropType) => {
 
 
     const statusValueMapping: string[] = statusList.map((status) => status.content);
+
     const orderByValueMapping: string[] = registrationOrderByList.map(orderBy => orderBy.content);
 
     const handleOptionsDispatch = (newOptions: RegistrationParamsType): void => {
@@ -49,6 +50,7 @@ const UtilsBar = ({statusList, options, role}: PropType) => {
 
     const handleStatusChange = (newStatusId: string): void => {
         const newStatus: string = statusValueMapping[parseInt(newStatusId)]
+
         if (newStatus != options.status) {
             const newOptions: RegistrationParamsType = {...options, status: newStatus};
             handleOptionsDispatch(newOptions);

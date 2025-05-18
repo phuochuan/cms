@@ -1,3 +1,5 @@
+import registrations from "../registrations.tsx";
+
 type DocumentType = {
     id: number;
     registrationId: number;
@@ -5,15 +7,18 @@ type DocumentType = {
     status: string;
     type: string;
 };
+
 interface IProps {
     documentRegistration: DocumentType[];
     setDocumentRegistration: (value: DocumentType[]) => void;
     status?: string;
+
 }
-import type { CollapseProps } from "antd";
-import { Collapse, Tag } from "antd";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store/store.ts";
+
+import type {CollapseProps} from "antd";
+import {Collapse, Tag} from "antd";
+import {useSelector} from "react-redux";
+import {RootState} from "../../../redux/store/store.ts";
 
 const VerifyDocumentForAccountant = (props: IProps) => {
     const { documentRegistration, setDocumentRegistration, status } = props;
@@ -80,60 +85,69 @@ const VerifyDocumentForAccountant = (props: IProps) => {
                     >
                         {documentRegistration &&
                             documentRegistration.length > 0 &&
-                            documentRegistration?.map((item) => (
-                                <div
-                                    key={item.id}
-                                    style={{
-                                        display: "flex",
-                                        justifyContent: "space-between",
-                                        border: `1px solid ${
-                                            item.status === "PENDING"
-                                                ? "#ccc"
-                                                : item.status === "APPROVED"
-                                                ? "#34A853"
-                                                : "#f71414"
-                                        }`,
-                                        padding: "10px 20px",
-                                        height: "60px",
-                                        alignItems: "center",
-                                        borderRadius: "10px",
-                                    }}
-                                >
-                                    <div style={{ flex: "3" }}>
-                                        <div
-                                            style={{
-                                                fontWeight: 500,
-                                                fontSize: "0.9rem",
-                                                cursor: "pointer",
-                                            }}
-                                        >
-                                            {item?.url?.split("/").pop()}
-                                        </div>
-                                        <div
-                                            style={{
-                                                fontWeight: 500,
-                                                fontSize: "0.8rem",
-                                                color: "#3276e8",
-                                                cursor: "pointer",
-                                            }}
-                                            onClick={() =>
-                                                handlePreview(item.url)
-                                            }
-                                        >
-                                            Preview
-                                        </div>
-                                    </div>
+                            documentRegistration?.map((item) => {
+
+                                const isEdit = (status === 'VERIFYING_ADMIN' && userRole === "ADMIN" && item.type==="CERTIFICATE")
+                                    || (status === 'VERIFYING_ACCOUNTANT' && userRole === "ACCOUNTANT" && item.type!=="CERTIFICATE")
+                                ;
+
+                                console.log(' isEdit ', isEdit ? "ok" : "not");
+
+                                console.log(status + "_" + userRole);
+
+                                return (
                                     <div
+                                        key={item.id}
                                         style={{
-                                            flex: "3",
-                                            fontWeight: 500,
-                                            fontSize: "1rem",
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            border: `1px solid ${
+                                                item.status === "PENDING"
+                                                    ? "#ccc"
+                                                    : item.status === "APPROVED"
+                                                        ? "#34A853"
+                                                        : "#f71414"
+                                            }`,
+                                            padding: "10px 20px",
+                                            height: "60px",
+                                            alignItems: "center",
+                                            borderRadius: "10px",
                                         }}
                                     >
-                                        {capitalizeFirstLetter(item.type)}
-                                    </div>
-                                    {status === "VERIFYING" &&
-                                        userRole === "ACCOUNTANT" && (
+                                        <div style={{ flex: "3" }}>
+                                            <div
+                                                style={{
+                                                    fontWeight: 500,
+                                                    fontSize: "0.9rem",
+                                                    cursor: "pointer",
+                                                }}
+                                            >
+                                                {item?.url?.split("/").pop()}
+                                            </div>
+                                            <div
+                                                style={{
+                                                    fontWeight: 500,
+                                                    fontSize: "0.8rem",
+                                                    color: "#3276e8",
+                                                    cursor: "pointer",
+                                                }}
+                                                onClick={() =>
+                                                    handlePreview(item.url)
+                                                }
+                                            >
+                                                Preview
+                                            </div>
+                                        </div>
+                                        <div
+                                            style={{
+                                                flex: "3",
+                                                fontWeight: 500,
+                                                fontSize: "1rem",
+                                            }}
+                                        >
+                                            {capitalizeFirstLetter(item.type)}
+                                        </div>
+                                        {isEdit && (
                                             <div
                                                 style={{
                                                     flex: "1",
@@ -221,8 +235,9 @@ const VerifyDocumentForAccountant = (props: IProps) => {
                                                 </div>
                                             </div>
                                         )}
-                                </div>
-                            ))}
+                                    </div>
+                                )
+                            })}
                     </div>
                 </>
             ),
@@ -233,7 +248,7 @@ const VerifyDocumentForAccountant = (props: IProps) => {
         <>
             {documentRegistration && documentRegistration.length > 0 && (
                 <div>
-                    <Collapse items={items} defaultActiveKey={["1"]} />
+                    <Collapse items={items} defaultActiveKey={["1"]}/>
                 </div>
             )}
         </>

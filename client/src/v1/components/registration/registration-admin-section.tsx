@@ -73,6 +73,7 @@ const RegistrationAdminSection = ({ status }: Props) => {
             >
                 {(status === Status.SUBMITTED ||
                     status === Status.DONE ||
+                    status === Status.VERIFYING_ADMIN ||
                     status === Status.VERIFYING ||
                     status === Status.DOCUMENT_DECLINED) && (
                     <FormField

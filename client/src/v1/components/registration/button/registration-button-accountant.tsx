@@ -1,10 +1,12 @@
-import { useRegistrationModal } from "../../../hooks/use-registration-modal.ts";
-import { Status } from "../../../constant";
-import { Button } from "../../ui/button.tsx";
-import { toast } from "sonner";
-import { useRefreshState } from "../../../hooks/use-refresh-state.ts";
+import {useRegistrationModal} from "../../../hooks/use-registration-modal.ts";
+import {Status} from "../../../constant";
+import {Button} from "../../ui/button.tsx";
+import {toast} from "sonner";
+import {useRefreshState} from "../../../hooks/use-refresh-state.ts";
 import ModalConfirm from "../../modal/modal-confirm.tsx";
-import { approve_Decline_Document_Registration } from "../../../service/registration.ts";
+import {approve_Decline_Document_Registration} from "../../../service/registration.ts";
+import instance from "../../../utils/customizeAxios.ts";
+
 type DocumentType = {
     id: number;
     registrationId: number;
@@ -93,9 +95,26 @@ export const RegistrationButtonForAccountant = (props: IProps) => {
             });
         }
     };
+
+    async function handleApproveDocument2() {
+        const res = await instance.put(`/v2/registration/${id}/accountant`, {});
+
+        window.location.reload();
+
+        toast.success("Create a new course successfully", {
+            description: "",
+            style: {
+                color: "green",
+                fontWeight: "bold",
+                textAlign: "center",
+            },
+        });
+
+    }
+
     return (
         <div className='flex justify-end gap-4'>
-            {status === Status.VERIFYING && (
+            {status === Status.VERIFYING_ACCOUNTANT && (
                 <>
                     <ModalConfirm
                         title='Decline this registration'
@@ -183,7 +202,7 @@ export const RegistrationButtonForAccountant = (props: IProps) => {
                     <ModalConfirm
                         title='Approve this registration'
                         description='Are you sure you want to approve this registration?'
-                        handleConfirm={handleApproveDocument}
+                        handleConfirm={handleApproveDocument2}
                         isLoading={
                             feedBackFromAccountant.trim() === "" ? false : true
                         }

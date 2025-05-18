@@ -1,18 +1,18 @@
-import React, {useState, useRef, useEffect} from "react";
-import {List, Input, Button, Avatar, Spin, Typography} from "antd";
-import {UserOutlined, RobotOutlined} from "@ant-design/icons";
+import React, {useEffect, useRef, useState} from "react";
+import {Avatar, Button, Input, List, Spin, Typography} from "antd";
+import {ArrowRightOutlined, RobotOutlined, UserOutlined} from "@ant-design/icons";
 import instance from "../../v1/utils/customizeAxios.ts";
-import {ArrowRightOutlined} from "@ant-design/icons";
 
 const { TextArea } = Input;
 const { Text } = Typography;
 
 type CourseRecommendationRequestion = {
     userMessage: string,
-    threadId: any
+    threadId: any,
+    setSelectedNewhread: any
 }
 
-const ChatUI = ({ idThread, setMessageId }) => {
+const ChatUI = ({ idThread, setMessageId, setSelectedNewhread }) => {
     const [messages, setMessages] = useState([
         { role: "ai", content: "Hello! How can I assist you today?" },
     ]);
@@ -28,7 +28,8 @@ const ChatUI = ({ idThread, setMessageId }) => {
     useEffect(() => {
         async function getThreadContent() {
             if (!idThread) {
-                // Nếu không có idThread thì dùng dữ liệu mẫu
+                setMessages([]);
+
                 return;
             }
 
@@ -45,7 +46,7 @@ const ChatUI = ({ idThread, setMessageId }) => {
 
                 setMessages(formatted);
             } catch (error) {
-                console.error("Error fetching messages:", error);
+                setMessages([]);
             }
         }
 
@@ -54,6 +55,12 @@ const ChatUI = ({ idThread, setMessageId }) => {
 
     const sendMessage = async () => {
         if (!input.trim()) return;
+
+        let isFirstPhase = false;
+
+        if (messages.length === 0 || messages.length === 1) {
+            isFirstPhase = true;
+        }
 
         const newMessage = { role: "user", content: input.trim() };
 
@@ -70,21 +77,24 @@ const ChatUI = ({ idThread, setMessageId }) => {
 
         const response = await instance.post(`/v2/ai/courses/recommendation`, aiRequest);
 
-        setTimeout(() => {
-            const aiResponse = {
-                role: "assistant",
-                content: response?.data.message,
-                ...response?.data
-            };
-            setMessages((prev) => [...prev, aiResponse]);
-            setIsTyping(false);
-        }, 1500);
+        const aiResponse = {
+            role: "assistant",
+            content: response?.data.message,
+            ...response?.data
+        };
+        setMessages((prev) => [...prev, aiResponse]);
+        setIsTyping(false);
+
+        
+        if (isFirstPhase) {
+            setSelectedNewhread(response.data.thread.id);
+        }
     };
 
     return (
         <div
             style={{
-                maxWidth: 1000,
+                maxWidth: 2000,
                 margin: "0 auto",
                 padding: 24,
                 maxHeight: "90vh",

@@ -466,7 +466,7 @@ export const RegistrationsForm = ({
                     {/* View Document and Feedback for Accounant */}
                     {user.user?.role === "ACCOUNTANT" && (
                         <div className='space-y-5'>
-                            {status === "VERIFYING" && (
+                            {status === "VERIFYING_ACCOUNTANT" && (
                                 <>
                                     <VerifyDocumentForAccountant
                                         documentRegistration={

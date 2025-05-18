@@ -1,11 +1,11 @@
-import { toast } from "sonner";
+import {toast} from "sonner";
 import instance from "../utils/customizeAxios.ts";
-import { isStatusSuccesful } from "../utils/checkResStatus.ts";
+import {isStatusSuccesful} from "../utils/checkResStatus.ts";
 
-import type { UploadFile } from "antd";
-import { RegistrationParamsType } from "../redux/slice/admin-registration.slice.ts";
+import type {UploadFile} from "antd";
+import {RegistrationParamsType} from "../redux/slice/admin-registration.slice.ts";
 import OrderByMapping from "../utils/orderByMapping.ts";
-import { Status } from "../constant";
+import {Status} from "../constant";
 
 export async function fetchAllRegistrations(
     params: RegistrationParamsType,
@@ -15,7 +15,9 @@ export async function fetchAllRegistrations(
     const status: string =
         params.status == "Declined (Document)"
             ? "DOCUMENT_DECLINED"
-            : params.status.toUpperCase();
+            : params.status == "Verifying"
+                ? "VERIFYING_ACCOUNTANT" : params.status.toUpperCase();
+
 
     const orderBy: string = OrderByMapping(params.orderBy);
 
@@ -170,15 +172,15 @@ export const finishLearning = async (id: string | number) => {
     const response = await instance.put(`/registrations/${id}/finish-learning`);
     response.status == 200
         ? toast.success("Finish learning", {
-              style: { color: "green" },
-              description:
-                  "Congratulations! You have successfully completed the course.",
-          })
+            style: { color: "green" },
+            description:
+                "Congratulations! You have successfully completed the course.",
+        })
         : toast.error("Failed to finish learning", {
-              style: { color: "red" },
-              description:
-                  "Opps.., some thing went wrong. Please, reload the page and try again",
-          });
+            style: { color: "red" },
+            description:
+                "Opps.., some thing went wrong. Please, reload the page and try again",
+        });
     return response;
 };
 
@@ -199,10 +201,10 @@ export const discardRegistration = async (id: number) => {
 };
 
 export const submitWithExistedCourse = async ({
-    courseId,
-    duration,
-    durationUnit,
-}: {
+                                                  courseId,
+                                                  duration,
+                                                  durationUnit,
+                                              }: {
     courseId: string;
     duration: number;
     durationUnit: string;

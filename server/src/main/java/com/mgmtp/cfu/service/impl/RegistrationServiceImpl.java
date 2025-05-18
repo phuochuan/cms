@@ -401,7 +401,7 @@ public class RegistrationServiceImpl implements RegistrationService {
                 .orElseThrow(() -> new BadRequestRuntimeException("Error: Registration not found."));
 
         // Check if the registration status is VERIFYING
-        if (registration.getStatus() == null || registration.getStatus() != RegistrationStatus.VERIFYING) {
+        if (registration.getStatus() == null || registration.getStatus() != RegistrationStatus.VERIFYING_ADMIN) {
             throw new BadRequestRuntimeException("Error: Registration must be in VERIFYING status.");
         }
 

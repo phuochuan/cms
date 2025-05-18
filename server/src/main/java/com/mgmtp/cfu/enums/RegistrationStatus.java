@@ -8,7 +8,8 @@ public enum RegistrationStatus {
     DONE,
     DOCUMENT_DECLINED,
     APPROVED,
-    VERIFYING,
+    VERIFYING_ADMIN,
+    VERIFYING_ACCOUNTANT,
     VERIFIED,
     CLOSED,
 }
