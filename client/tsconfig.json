@@ -20,7 +20,9 @@
         "noFallthroughCasesInSwitch": true,
         "allowSyntheticDefaultImports": true
     },
-    "include": ["src", "src/service/notification/notification.ts"],
+    "include": ["src",
+      "src/v1/service/notification/notification.ts"
+    ],
     "references": [
         {
             "path": "./tsconfig.node.json"

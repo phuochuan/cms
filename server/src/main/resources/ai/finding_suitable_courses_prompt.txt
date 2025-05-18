@@ -1,0 +1,17 @@
+Inputs: {{user_message}}
+already courses: {{already_courses}}
+
+Task:
+1. Analyze the user message carefully.
+2. Determine the main requirement or topic the user is looking for.
+3. Search in the provided list of courses (already courses) and find any that match the user's requirement.
+4. Additionally, search on **Coursera** and **Udemy** platforms for courses that match the requirement.
+5. Select and filter at least **3 most suitable and relevant** courses.
+6. Important:
+   - For any course found in already courses, return **only** the courseId.
+   - For any course from online platforms (Coursera, Udemy), return **all fields** (title, link, instructor, etc.), but **do NOT include courseId**.
+   - **Ensure that all returned links are valid and point directly to the correct course pages** on Coursera or Udemy.
+
+Return format:
+- Only return in **JSON format**, strictly structured as a list of this Java class: {{response_class}}.
+- Do not include any extra explanation or text. Only output JSON. (NO MORE text outside JSON)

@@ -41,13 +41,13 @@ public class CategoryServiceImpl implements CategoryService {
         DTOMapper<CategoryDTO, Category> mapper = mapperOpt.get();
 
         return categoryRepository.findCategoriesByStatus(CategoryStatus.AVAILABLE)
-                .stream().map(mapper::toDTO).collect(Collectors.toList());
+            .stream().map(mapper::toDTO).collect(Collectors.toList());
     }
 
     @Override
     public List<Category> findOrCreateNewCategory(List<CourseRequest.CategoryCourseRequestDTO> categoryRequests) {
         List<Category> categories = new ArrayList<>();
-        if(categoryRequests == null || categoryRequests.isEmpty()){
+        if (categoryRequests == null || categoryRequests.isEmpty()) {
             return categories;
         }
         try {
@@ -59,12 +59,14 @@ public class CategoryServiceImpl implements CategoryService {
                 if (value.matches("\\d+")) {
                     existCategory = categoryRepository.findById(Long.valueOf(value));
                 } else {
-                    existCategory = categoryRepository.findCategoryByNameIgnoreCase(value);
+                    List<Category> categoriess = categoryRepository.findCategoryByNameIgnoreCase(value);
+
+                    existCategory = categoriess.isEmpty() ? Optional.empty() : Optional.of(categoriess.get(0));
                 }
                 if (existCategory.isPresent()) {
                     if (!categories.contains(existCategory.get())) {
                         Category category = existCategory.get();
-                        if (isAdmin){
+                        if (isAdmin) {
                             category.setStatus(CategoryStatus.AVAILABLE);
                             categoryRepository.save(category);
                         }

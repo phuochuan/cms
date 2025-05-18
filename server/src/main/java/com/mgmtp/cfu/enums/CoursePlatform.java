@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum CoursePlatform {
     UDEMY("Udemy"),
     COURSERA("Coursera"),
+    COURSE4U("Course4U"),
     LINKEDIN("LinkedIn"),
     OTHER("Other");
 
@@ -13,5 +14,14 @@ public enum CoursePlatform {
 
     CoursePlatform(String label) {
         this.label = label;
+    }
+
+    public static CoursePlatform fromLabel(String label) {
+        for (CoursePlatform platform : values()) {
+            if (platform.getLabel().equalsIgnoreCase(label)) {
+                return platform;
+            }
+        }
+        return OTHER;
     }
 }

@@ -38,4 +38,33 @@ public class UploadServiceImpl implements UploadService {
         }
     }
 
+    // ✅ Method mới: Upload Video
+    public String uploadVideo(MultipartFile video, String directory) throws IOException {
+        if (video == null || video.isEmpty()) {
+            throw new IllegalArgumentException("Video file is empty");
+        }
+
+        // Lấy phần mở rộng file (vd: .mp4)
+        String originalFilename = video.getOriginalFilename();
+        String extension = originalFilename != null && originalFilename.contains(".")
+            ? originalFilename.substring(originalFilename.lastIndexOf("."))
+            : ".mp4"; // default
+
+        // Tạo tên file random
+        String uuidFilename = UUID.randomUUID() + extension;
+
+        // Đường dẫn lưu video
+        Path uploadPath = Paths.get(directory).toAbsolutePath().normalize();
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        Path filePath = uploadPath.resolve(uuidFilename);
+
+        // Lưu file
+        video.transferTo(filePath.toFile());
+
+        // Trả về tên file hoặc URL (tuỳ bạn map)
+        return uuidFilename;
+    }
+
 }

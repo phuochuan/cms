@@ -61,6 +61,7 @@ public class RegistrationController {
     public ResponseEntity<Registration> createRegistration(@ModelAttribute RegistrationRequest registrationRequest) {
         try {
             registrationService.createRegistration(registrationRequest);
+
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (DuplicateCourseException e) {
             return new ResponseEntity<>(null, HttpStatus.CONFLICT);

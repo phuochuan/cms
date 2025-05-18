@@ -18,8 +18,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long>, JpaSp
     List<Category> findCategoriesByStatus(CategoryStatus status);
     List<Category> findByIdIn(Collection<Long> id);
 
-    Optional<Category> findCategoryByNameIgnoreCase(String label);
+    List<Category> findCategoryByNameIgnoreCase(String label);
 
     @Query("select new com.mgmtp.cfu.dto.categorydto.CategoryDTO(ca.id,ca.name) from Category ca join ca.courses co where co.id=:courseId")
     Set<CategoryDTO> findAllByCourseId(Long courseId);
+
+    @Query("select ca from Category ca join ca.courses co where co.id=:courseId")
+    List<Category> findAllCategoriesByCourseId(Long courseId);
+
 }

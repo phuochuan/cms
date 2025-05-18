@@ -1,5 +1,6 @@
 package com.mgmtp.cfu.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.mgmtp.cfu.enums.CourseLevel;
 import com.mgmtp.cfu.enums.CoursePlatform;
@@ -23,7 +24,7 @@ public class Course {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="`Id`")
+    @Column(name = "`Id`")
     private Long id;
 
     @Column(name = "`Name`")
@@ -55,16 +56,31 @@ public class Course {
 
     @ManyToMany
     @JoinTable(name = "`Category_Course`",
-               joinColumns = @JoinColumn(name = "`CourseId`"),
-               inverseJoinColumns = @JoinColumn(name = "`CategoryId`"))
+        joinColumns = @JoinColumn(name = "`CourseId`"),
+        inverseJoinColumns = @JoinColumn(name = "`CategoryId`"))
     private Set<Category> categories;
 
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @JsonIgnore
     private Set<Registration> registrations;
 
-    @OneToMany(mappedBy = "course",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     @JsonManagedReference
+    @JsonIgnore
     private Set<CourseReview> courseReviews;
+
+    @ManyToOne
+    @JsonManagedReference
+    @JsonIgnore
+    private User owner;
+
+    private String description;
+
+
+    @JsonIgnore
+    public String buildShortIntro() {
+        return "Id: " + this.id + ", name: " + this.name;
+    }
 
 }
